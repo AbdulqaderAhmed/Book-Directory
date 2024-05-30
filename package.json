@@ -6,7 +6,12 @@
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
-    "elysia": "latest"
+    "@lucia-auth/adapter-mongodb": "^1.0.3",
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^2.4.3",
+    "elysia": "^1.0.22",
+    "lucia": "^3.2.0",
+    "mongoose": "^8.4.0"
   },
   "devDependencies": {
     "bun-types": "latest"
