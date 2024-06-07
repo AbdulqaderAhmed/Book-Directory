@@ -3,9 +3,7 @@ import bycrptjs from "bcryptjs";
 export const register = async ({
   set,
   User,
-  lucia,
   body: { username, password, email },
-  cookie: { user_session },
 }: {
   set: any;
   User: any;
@@ -45,23 +43,14 @@ export const register = async ({
         error: "User already exist",
       };
     }
+
     const user = await User.create({
       username,
       email,
       password: hashPassword,
     });
 
-    const session = await lucia.createSession(user._id, {});
-    const sessionCookie = lucia.createSessionCookie(session.id);
-
     set.status = 201;
-
-    user_session.set({
-      name: sessionCookie.name,
-      value: sessionCookie.value,
-      httpOnly: true,
-      secure: false,
-    });
 
     return {
       user,
@@ -137,6 +126,8 @@ export const login = async ({
       httpOnly: true,
       secure: false,
     });
+
+    user.token = sessionCookie.value;
 
     return {
       user,

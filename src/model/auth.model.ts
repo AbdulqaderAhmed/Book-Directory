@@ -17,6 +17,9 @@ export const User = mongoose.model(
         type: String,
         required: true,
       },
+      token: {
+        type: String,
+      },
     },
     { timestamps: true }
   )

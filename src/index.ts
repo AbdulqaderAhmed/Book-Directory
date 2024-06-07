@@ -5,6 +5,8 @@ import { User, adapter } from "./model/auth.model";
 import { authRoute } from "./routes/auth.route";
 import { Book } from "./model/book.model";
 import { bookRoute } from "./routes/book.route";
+import { cors } from "@elysiajs/cors";
+import { staticPlugin } from "@elysiajs/static";
 
 dbConnection();
 
@@ -24,6 +26,8 @@ const lucia = new Lucia(adapter, {
 });
 
 const app = new Elysia()
+  .use(cors())
+  .use(staticPlugin())
   .decorate("lucia", lucia)
   .decorate("User", User)
   .decorate("Book", Book)
@@ -32,5 +36,5 @@ const app = new Elysia()
   .listen(port);
 
 console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
+  `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
 );
