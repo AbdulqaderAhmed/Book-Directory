@@ -1,7 +1,18 @@
+import { error } from "elysia";
 import { validateToken } from "../middleware/tokenVlidation";
 import { uploadFile } from "../middleware/uploadFile";
 
-export const getAllBook = async ({ set, Book }: { set: any; Book: any }) => {
+export const getAllBook = async ({
+  set,
+  Book,
+  query: { p },
+}: {
+  set: any;
+  Book: any;
+  query: { p: number };
+}) => {
+  const page = p || 0;
+  const booksPerPage = 3;
   try {
     const book = await Book.find().sort({ createdAt: -1 }).exec();
 
@@ -162,16 +173,12 @@ export const updateBook = async ({
 
     if (!bookInfo && id !== bookInfo?._id) {
       set.status = 404;
-      return {
-        error: "Blog not found!",
-      };
+      throw new Error("Blook not found!");
     }
 
     if (bookInfo.user_id.toString() !== userToken.user.id.toString()) {
       set.status = 401;
-      return {
-        error: "You are not allowed to update this blog",
-      };
+      throw new Error("You are not allowed to update this blog");
     }
 
     if (book_cover) {
@@ -228,7 +235,7 @@ export const updateBook = async ({
 
     set.status = 201;
     return {
-      blog: newBook,
+      book: newBook,
     };
   } catch (error: any) {
     set.status = 500;
@@ -281,6 +288,32 @@ export const deleteBook = async ({
     set.status = 500;
     return {
       error: error.message,
+    };
+  }
+};
+
+export const searchBook = async ({
+  set,
+  query: { q },
+  Book,
+}: {
+  set: any;
+  query: any;
+  Book: any;
+}) => {
+  try {
+    const book = await Book.find({
+      book_name: { $regex: q, $options: "i" },
+    });
+
+    return {
+      books: book,
+    };
+  } catch (error: any) {
+    set.status = 500;
+    return {
+      error: error.message,
+      stack: error.stack,
     };
   }
 };

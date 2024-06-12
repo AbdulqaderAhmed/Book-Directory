@@ -4,6 +4,7 @@ import {
   deleteBook,
   getAllBook,
   getBook,
+  searchBook,
   updateBook,
 } from "../controller/book.controller";
 
@@ -12,4 +13,5 @@ export const bookRoute = new Elysia({ prefix: "api/book" })
   .post("/", createBook)
   .get("/id/:id", getBook)
   .put("/id/:id", updateBook)
-  .delete("/id/:id", deleteBook);
+  .delete("/id/:id", deleteBook)
+  .get("/search", searchBook);

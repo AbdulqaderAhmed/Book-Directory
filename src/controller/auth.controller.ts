@@ -142,13 +142,16 @@ export const logout = async ({
   set,
   lucia,
   cookie: { user_session },
+  headers,
 }: {
   set: any;
   lucia: any;
   cookie: { user_session: any };
+  headers: any;
 }) => {
   try {
-    const { session } = await lucia.validateSession(user_session.value);
+    const token = headers["authorization"].split(" ")[1];
+    const { session } = await lucia.validateSession(token);
     if (!session) {
       set.status = 401;
       return {

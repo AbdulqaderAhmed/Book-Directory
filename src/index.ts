@@ -1,6 +1,6 @@
 import { Elysia } from "elysia";
 import { dbConnection } from "./config/dbConnection";
-import { Lucia } from "lucia";
+import { Lucia, TimeSpan } from "lucia";
 import { User, adapter } from "./model/auth.model";
 import { authRoute } from "./routes/auth.route";
 import { Book } from "./model/book.model";
@@ -18,6 +18,7 @@ const lucia = new Lucia(adapter, {
       secure: false,
     },
   },
+  sessionExpiresIn: new TimeSpan(1, "d"),
   getUserAttributes: (attributes: any) => {
     return {
       username: attributes.username,

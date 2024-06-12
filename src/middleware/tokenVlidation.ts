@@ -1,6 +1,11 @@
 export const validateToken = async (headers: any, lucia: any, set: any) => {
   const authorizationHeader = headers["authorization"];
-  const sessionId = lucia.readBearerToken(authorizationHeader ?? "");
+  const sessionId = lucia.readBearerToken(authorizationHeader);
+
+  if (!sessionId) {
+    set.status = 401;
+    throw new Error("Invalid session!");
+  }
 
   const { session, user } = await lucia.validateSession(sessionId);
 
