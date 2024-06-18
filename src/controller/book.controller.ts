@@ -5,22 +5,24 @@ import { uploadFile } from "../middleware/uploadFile";
 export const getAllBook = async ({
   set,
   Book,
-  query: { p, limit },
+  query: { p },
 }: {
   set: any;
   Book: any;
-  query: { p: number; limit: number };
+  query: { p: number };
 }) => {
   const page = p || 0;
-  const booksPerPage = limit || 0;
+  const limit = 4;
   try {
     const book = await Book.find()
       .sort({ createdAt: -1 })
-      .skip(page * booksPerPage)
-      .limit(booksPerPage)
+      .skip(page * limit)
+      .limit(limit)
       .exec();
 
-    return { page, booksPerPage, books: book };
+    const total = await Book.find().count();
+
+    return { page: page + 1, limit, total, books: book };
   } catch (error: any) {
     set.status = 500;
     return {
@@ -298,19 +300,31 @@ export const deleteBook = async ({
 
 export const searchBook = async ({
   set,
-  query: { q },
+  query: { q, p },
   Book,
 }: {
   set: any;
   query: any;
   Book: any;
 }) => {
+  const page = p || 0;
+  const limit = 4;
   try {
     const book = await Book.find({
       book_name: { $regex: q, $options: "i" },
-    });
+    })
+      .skip(page * limit)
+      .limit(limit)
+      .exec();
+
+    const total = await Book.find({
+      book_name: { $regex: q, $options: "i" },
+    }).count();
 
     return {
+      page: page + 1,
+      limit,
+      total,
       books: book,
     };
   } catch (error: any) {
