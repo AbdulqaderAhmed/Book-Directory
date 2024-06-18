@@ -5,18 +5,22 @@ import { uploadFile } from "../middleware/uploadFile";
 export const getAllBook = async ({
   set,
   Book,
-  query: { p },
+  query: { p, limit },
 }: {
   set: any;
   Book: any;
-  query: { p: number };
+  query: { p: number; limit: number };
 }) => {
   const page = p || 0;
-  const booksPerPage = 3;
+  const booksPerPage = limit || 0;
   try {
-    const book = await Book.find().sort({ createdAt: -1 }).exec();
+    const book = await Book.find()
+      .sort({ createdAt: -1 })
+      .skip(page * booksPerPage)
+      .limit(booksPerPage)
+      .exec();
 
-    return { books: book };
+    return { page, booksPerPage, books: book };
   } catch (error: any) {
     set.status = 500;
     return {
